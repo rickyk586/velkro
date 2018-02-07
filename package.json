@@ -1,7 +1,7 @@
 {
-	"name": "api-framework",
+	"name": "velkro",
 	"version": "0.1.0",
-	"description": "API framework",
+	"description": "Module-based Node.js API Framework",
 	"main": "lib/application.js",
 	"scripts": {
 		"test": "jest",
