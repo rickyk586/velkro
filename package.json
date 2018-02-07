@@ -1,0 +1,43 @@
+{
+	"name": "api-framework",
+	"version": "0.1.0",
+	"description": "API framework",
+	"main": "lib/application.js",
+	"scripts": {
+		"test": "jest",
+		"test-watch": "jest --watch"
+	},
+	"dependencies": {
+		"@koa/cors": "^2.2.1",
+		"debug": "^3.1.0",
+		"glob": "^7.1.2",
+		"jsonwebtoken": "^8.1.1",
+		"koa": "^2.4.1",
+		"koa-bodyparser": "^4.2.0",
+		"koa-jwt": "^3.3.0",
+		"koa-router": "^7.3.0",
+		"lodash": "^4.17.4"
+	},
+	"devDependencies": {
+		"istanbul": "^0.4.5",
+		"jest": "^22.1.4",
+		"supertest": "^3.0.0"
+	},
+	"engines": {
+		"node": ">= 7.6.0"
+	},
+	"files": [
+		"lib"
+	],
+	"jest": {
+		"testMatch": [
+			"**/test/tests/**/*.js"
+		],
+		"coverageReporters": [
+			"text-summary",
+			"lcov"
+		],
+		"bail": true,
+		"testEnvironment": "node"
+	}
+}
