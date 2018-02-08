@@ -20,6 +20,10 @@ const app = new Velkro().on('error', e => console.error(e));
 app.ready.then(() => console.log('API Ready!'));
 ```
 
+## Sample App
+
+Check out [test/sample-app](../master/test/sample-app) for an example app.
+
 ## Constructor defaults
 
 ```js
@@ -172,7 +176,7 @@ Data returned by each controller method is put into "data". Errors are added to 
 
 Using Async/Await (promises in general) everywhere allows us to take advantage of having one exception channel. That is, if an error occurs, an exception is thrown and it flows back up through the call stack where it can be caught anywhere along the way using try/catch.
 
-_(Please see the 'test-error' route in [test/sample-app1/modules/routes.js](../master/test/sample-app1/modules/routes.js) to follow an example of error handling)_
+_(Please see the 'test-error' route in [test/sample-app/modules/routes.js](../master/test/sample-app/modules/routes.js) to follow an example of error handling)_
 
 Velkro offers two specialized Errors to assist with error handling:
 
@@ -216,7 +220,7 @@ If an InternalError makes its way all the way back up (for example, if `throw e`
 
 ## JSON Web Tokens
 
-If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set the "jwt" value of the AJAX object. The frontend needs to then store the token (for example in a cookie) and pass it along with each request by setting the 'Authorization' header (please see the 'login-required endpoint - logged in' test in [test/tests/application.js](../master/test/tests/application.js) for an example). `ctx.state.user` is then set to the token data, which for example can be used for determining if a user is logged in or not (see [test/sample-app1/middleware/security/login-required.js](../master/test/sample-app1/middleware/security/login-required.js)).
+If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set the "jwt" value of the AJAX object. The frontend needs to then store the token (for example in a cookie) and pass it along with each request by setting the 'Authorization' header (please see the 'login-required endpoint - logged in' test in [test/tests/application.js](../master/test/tests/application.js) for an example). `ctx.state.user` is then set to the token data, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](../master/test/sample-app/middleware/security/login-required.js)).
 
 _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is used for downstream token signing)_
 
@@ -229,7 +233,7 @@ The app instance returned from `new Velkro()` is an event emitter that emits the
 * 'external-error'			//called on each external error (see Error Handling)
 * 'internal-error'			//called on each internal error (see Error Handling)
 * 'unknown-error'			//called on each unknown error (not internal or external)
-* 'error'					//called on any error (any of above)
+* 'err'						//called on any error (any of above)
 
 The event is emitted with the [Koa] app as the first parameter. The 'routes-loaded' event is emitted with a second parameter of an object showing all of the routes like so:
 

@@ -12,7 +12,7 @@ async function abcMiddleware(ctx, next){
 
 describe('app', () =>{
 	const app = new Velkro({
-		modulesDir: './test/sample-app1/modules',
+		modulesDir: './test/sample-app/modules',
 		middlewares: [
 			// logMiddleware,
 			abcMiddleware
@@ -20,7 +20,10 @@ describe('app', () =>{
 		jwt: {
 			secret: '38rjh#U&G223id9#$^&Oj889'
 		}
-	}).on('error', e => console.error(e));
+	})
+		// .on('err', e => console.error(e));
+		.on('internal-error', e => console.error(e))
+		.on('unknown-error', e => console.error(e));
 	
 	test('basic call', async () => {
 		await app.ready;

@@ -1,6 +1,6 @@
 {
 	"name": "velkro",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Async/Await Module-based Node.js API Framework built on Koa (the successor to Express)",
 	"main": "lib/application.js",
 	"scripts": {
