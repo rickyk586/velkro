@@ -28,21 +28,21 @@ Check out [test/sample-app](../master/test/sample-app) for an example app.
 
 ```js
 new Velkro({
-  port: '8080',
-  modulesDir: 'modules',
-  middlewares: [],      //added to each route
-  startHttpServer: true,
-  routes: {
-    filename: 'routes.js',
-    base: ''      //url base
-  },
-  cors: {
-    enabled: true,
-    options: {}      //passed through to @koa/cors
-  },
-  jwt: {
-    secret: null
-  }
+    port: '8080',
+    modulesDir: 'modules',
+    middlewares: [],            //added to each route
+    startHttpServer: true,
+    routes: {
+        filename: 'routes.js',
+        base: ''            //url base
+    },
+    cors: {
+        enabled: true,
+        options: {}            //passed through to @koa/cors
+    },
+    jwt: {
+        secret: null
+    }
 });
 ```
 
@@ -75,31 +75,31 @@ const loginRequired = require('../../middleware/security/login-required');
 const canViewSecret = require('../../middleware/security/can-view-secret');
 
 module.exports = [
-  {
-    routes: {
-      post: {
-        'test'(){
-          return 'test';
-        },
-        'login': controller.login,
-        'register': controller.register,
-      }
-    }
-  }, {
-    middleware: loginRequired,
-    routes: {
-      get: {
-        'me': controller.getMe,
-        'me-secret': {
-          middleware: [canViewSecret],
-          handler: controller.getMeSecret
+    {
+        routes: {
+            post: {
+                'test'(){
+                    return 'test';
+                },
+                'login': controller.login,
+                'register': controller.register,
+            }
         }
-      },
-      post: {
-        'me': controller.updateMe
-      }
+    }, {
+        middleware: loginRequired,
+        routes: {
+            get: {
+                'me': controller.getMe,
+                'me-secret': {
+                    middleware: [canViewSecret],
+                    handler: controller.getMeSecret
+                }
+            },
+            post: {
+                'me': controller.updateMe
+            }
+        }
     }
-  }
 ];
 ```
 
@@ -125,36 +125,36 @@ const {ExternalError} = require('velkro/lib/errors');
 const model = require('./model');
 
 module.exports = {
-  async login(ctx){
-    const data = ctx.request.body;
-    
-    let userId;
-    
-    try{
-      userId = await model.login(data.email, data.password);
-    }catch(e){
-      if(e.handle === 'incorrect-password'){
-        throw ExternalError('incorrect-password', 'The password you provided is incorrect');
-      }else{
-        throw e;
-      }
-    }
-    
-    ctx.state.user = {
-      id: userId
-    };
-    
-    return userId;
-  },
-  async getMe(ctx){
-    const userId = ctx.state.user.id;
-    let user = await model.find(userId);
-    
-    //filter user
-    
-    return user;
-  },
-  //... other methods used in routes.js
+    async login(ctx){
+        const data = ctx.request.body;
+        
+        let userId;
+        
+        try{
+            userId = await model.login(data.email, data.password);
+        }catch(e){
+            if(e.handle === 'incorrect-password'){
+                throw ExternalError('incorrect-password', 'The password you provided is incorrect');
+            }else{
+                throw e;
+            }
+        }
+        
+        ctx.state.user = {
+            id: userId
+        };
+        
+        return userId;
+    },
+    async getMe(ctx){
+        const userId = ctx.state.user.id;
+        let user = await model.find(userId);
+        
+        //filter user
+        
+        return user;
+    },
+    //... other methods used in routes.js
 };
 ```
 
@@ -168,26 +168,26 @@ Sample model.js:
 const {InternalError} = require('velkro/lib/errors');
 
 const mockDB = {
-  '123': {
-    email: 'foo@foo.com',
-    firstname: 'bar',
-  }
+    '123': {
+        email: 'foo@foo.com',
+        firstname: 'bar',
+    }
 };
 
 module.exports = {
-  async find(userId){
-    await new Promise(resolve => setTimeout(resolve, 50));  //simulate asynchronous call
-    return mockDB[userId];
-  },
-  async login(email, password){
-    //mock login
-    await new Promise(resolve => setTimeout(resolve, 50));  //simulate asynchronous call
-    if(email === mockDB[123].email && password === 'bar'){
-      return 123;
-    }else{
-      throw InternalError('incorrect-password');
+    async find(userId){
+        await new Promise(resolve => setTimeout(resolve, 50));    //simulate asynchronous call
+        return mockDB[userId];
+    },
+    async login(email, password){
+        //mock login
+        await new Promise(resolve => setTimeout(resolve, 50));    //simulate asynchronous call
+        if(email === mockDB[123].email && password === 'bar'){
+            return 123;
+        }else{
+            throw InternalError('incorrect-password');
+        }
     }
-  }
 };
 ```
 
@@ -197,14 +197,14 @@ The data returned by each route is in a standardized object format:
 
 ```json
 {
-  "actions": [],
-  "errors": [{
-    "msg": "",
-    "handle": ""  
-  }],
-  "notices": [],
-  "jwt": "",
-  "data": {}
+    "actions": [],
+    "errors": [{
+        "msg": "",
+        "handle": ""    
+    }],
+    "notices": [],
+    "jwt": "",
+    "data": {}
 }
 ```
 
@@ -234,19 +234,19 @@ This is to be used when an error is meant to be displayed to the user. To contin
 
 ```js
 module.exports = {
-  async testError(ctx){
-    try{
-      await model.testError();
-    }catch(e){
-      if(e.handle === 'incorrect-password'){
-        throw ExternalError('incorrect-password', 'The password you provided is incorrect');
-      }else{
-        throw e;
-      }
+    async testError(ctx){
+        try{
+            await model.testError();
+        }catch(e){
+            if(e.handle === 'incorrect-password'){
+                throw ExternalError('incorrect-password', 'The password you provided is incorrect');
+            }else{
+                throw e;
+            }
+        }
+        
+        return 'no error';
     }
-    
-    return 'no error';
-  }
 };
 ```
 
@@ -263,13 +263,13 @@ _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is
 ## app
 
 The app instance returned from `new Velkro()` is an event emitter that emits these events:
-* 'middleware-added'    //called when all the core middleware has been added
-* 'routes-loaded'      //called when all routes have been loaded 
-* 'http-server-started'    //called when the server has started
-* 'external-error'      //called on each external error (see Error Handling)
-* 'internal-error'      //called on each internal error (see Error Handling)
-* 'unknown-error'      //called on each unknown error (not internal or external)
-* 'err'            //called on any error (any of above)
+* 'middleware-added'        //called when all the core middleware has been added
+* 'routes-loaded'            //called when all routes have been loaded 
+* 'http-server-started'        //called when the server has started
+* 'external-error'            //called on each external error (see Error Handling)
+* 'internal-error'            //called on each internal error (see Error Handling)
+* 'unknown-error'            //called on each unknown error (not internal or external)
+* 'err'                        //called on any error (any of above)
 
 The event is emitted with the [Koa] app as the first parameter. The 'routes-loaded' event is emitted with a second parameter of an object showing all of the routes like so:
 
