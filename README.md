@@ -180,8 +180,6 @@ _(Please see the 'test-error' route in [test/sample-app/modules/routes.js](../ma
 
 Velkro offers two specialized Errors to assist with error handling:
 
----
-
 ### InternalError
 
 `const {InternalError} = require('velkro/lib/errors');`
