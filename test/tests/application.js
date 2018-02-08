@@ -45,10 +45,12 @@ describe('app', () =>{
 	test('login-required endpoint - logged in', async () => {
 		await app.ready;
 		
-		const response1 = await request(app.httpServer).post('/user/login', {
-			email: 'foo@foo.com',
-			password: 'bar'
-		});
+		const response1 = await request(app.httpServer)
+			.post('/user/login')
+			.send({
+				email: 'foo@foo.com',
+				password: 'bar'
+			});
 		
 		expect(response1.body).toHaveProperty('jwt');
 		
@@ -57,7 +59,7 @@ describe('app', () =>{
 			.set('Authorization', `Bearer ${response1.body.jwt}`);
 		
 		expect(response2.body.data).toEqual({
-			email: 'foo',
+			email: 'foo@foo.com',
 			firstname: 'bar',
 		});
 	});

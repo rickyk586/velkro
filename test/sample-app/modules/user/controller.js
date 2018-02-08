@@ -1,15 +1,30 @@
 'use strict';
 
+const {ExternalError} = require('../../../../lib/errors');
+
 const model = require('./model');
 
 module.exports = {
-	login(ctx){
-		//mock login
+	async login(ctx){
+		const data = ctx.request.body;
+		
+		let userId;
+		
+		try{
+			userId = await model.login(data.email, data.password);
+		}catch(e){
+			if(e.handle === 'incorrect-password'){
+				throw ExternalError('incorrect-password', 'The password you provided is incorrect');
+			}else{
+				throw e;
+			}
+		}
+		
 		ctx.state.user = {
-			id: 123
+			id: userId
 		};
 		
-		return true;
+		return userId;
 	},
 	async getMe(ctx){
 		const userId = ctx.state.user.id;

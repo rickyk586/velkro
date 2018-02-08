@@ -120,14 +120,39 @@ Each route in routes.js is linked to a method in the controller. The data return
 Sample controller.js:
 
 ```js
+const {ExternalError} = require('velkro/lib/errors');
+
 const model = require('./model');
 
 module.exports = {
 	async login(ctx){
-		//...
+		const data = ctx.request.body;
+		
+		let userId;
+		
+		try{
+			userId = await model.login(data.email, data.password);
+		}catch(e){
+			if(e.handle === 'incorrect-password'){
+				throw ExternalError('incorrect-password', 'The password you provided is incorrect');
+			}else{
+				throw e;
+			}
+		}
+		
+		ctx.state.user = {
+			id: userId
+		};
+		
+		return userId;
 	},
 	async getMe(ctx){
-		//...
+		const userId = ctx.state.user.id;
+		let user = await model.find(userId);
+		
+		//filter user
+		
+		return user;
 	},
 	//... other methods used in routes.js
 };
@@ -140,16 +165,29 @@ You can optionally have a model for each module. It's good practice to put exter
 Sample model.js:
 
 ```js
-const DB = require('../../libs/db');
+const {InternalError} = require('velkro/lib/errors');
+
+const mockDB = {
+	'123': {
+		email: 'foo@foo.com',
+		firstname: 'bar',
+	}
+};
 
 module.exports = {
-	async login(username, password){
-		//...
+	async find(userId){
+		await new Promise(resolve => setTimeout(resolve, 50));
+		return mockDB[userId];
 	},
-	async getMe(id){
-		//...
-	},
-	//... other methods used in controller.js, or other models
+	async login(email, password){
+		//mock login
+		await new Promise(resolve => setTimeout(resolve, 50));
+		if(email === mockDB[123].email && password === 'bar'){
+			return 123;
+		}else{
+			throw InternalError('incorrect-password');
+		}
+	}
 };
 ```
 
