@@ -1,5 +1,7 @@
 'use strict';
 
+const controller = require('./controller');
+
 async function xyzMiddleware(ctx, next){
 	await new Promise(resolve => setTimeout(resolve, 500));
 	ctx.ajax.setKey('xyz', 'XYZ');
@@ -19,7 +21,8 @@ module.exports = [
 						await new Promise(resolve => setTimeout(resolve, 500));
 						return 'xyz';
 					}
-				}
+				},
+				'test-error': controller.testError
 			}
 		}
 	}

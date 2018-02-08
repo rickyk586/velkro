@@ -12,7 +12,7 @@ module.exports = [
 			}
 		}
 	}, {
-		middleware: loginRequired,
+		middlewares: [loginRequired],
 		routes: {
 			get: {
 				'me': controller.getMe,

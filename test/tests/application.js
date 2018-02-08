@@ -13,14 +13,10 @@ async function abcMiddleware(ctx, next){
 describe('app', () =>{
 	const app = new Velkro({
 		modulesDir: './test/sample-app1/modules',
-		logger: {
-			enabled: true,
-		},
 		middlewares: [
 			// logMiddleware,
 			abcMiddleware
 		],
-		startHttpServer: true,
 		jwt: {
 			secret: '38rjh#U&G223id9#$^&Oj889'
 		}
@@ -78,6 +74,15 @@ describe('app', () =>{
 		
 		expect(response.body).toHaveProperty('data', 'xyz');
 		expect(response.body).toHaveProperty('xyz', 'XYZ');
+	});
+	
+	test('error handling', async () =>{
+		await app.ready;
+		
+		const response = await request(app.httpServer).get('/test-error');
+		
+		expect(response.body).toHaveProperty('errors');
+		expect(response.body.errors[0]).toHaveProperty('handle', 'external-error');
 	});
 	
 	test('shutdown', () => {

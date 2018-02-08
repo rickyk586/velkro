@@ -1,12 +1,22 @@
 {
 	"name": "velkro",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Module-based Node.js API Framework",
 	"main": "lib/application.js",
 	"scripts": {
 		"test": "jest",
 		"test-watch": "jest --watch"
 	},
+	"repository": "rickyk586/velkro",
+	"keywords": [
+		"web",
+		"app",
+		"http",
+		"application",
+		"framework",
+		"middleware",
+		"module"
+	],
 	"dependencies": {
 		"@koa/cors": "^2.2.1",
 		"debug": "^3.1.0",
