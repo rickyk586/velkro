@@ -1,8 +1,6 @@
 # Velkro
 Async/Await Module-based Node.js API Framework built on [Koa] (the successor to Express)
 
-[![NPM version][npm-image]][npm-url]
-
 The purpose of Velkro is to give you a structure for your API code. It allows you to chunk your code into modules, with each module having a routes definition, and optionally a controller and model. Routes are automatically pulled from modules and added to the http server. Velkro also allows you to easily add middleware across the entire API, per group of routes, or per individual routes. It is mostly unopinionated, leaving the data layer up to you. It does however handle JSON body (using [koa-bodyparser]), [JSON Web Tokens](#json-web-tokens), CORS (using [@koa/cors]), [AJAX respond object structure](#ajax-response-object), and [internal/external error handling](#error-handling). 
   
 ## Installation
