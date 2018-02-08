@@ -172,7 +172,7 @@ Data returned by each controller method is put into "data". Errors are added to 
 
 Using Async/Await (promises in general) everywhere allows us to take advantage of having one exception channel. That is, if an error occurs, an exception is thrown and it flows back up through the call stack where it can be caught anywhere along the way using try/catch.
 
-_(Please see the 'test-error' route in [test/sample-app1/modules/routes.js](../test/sample-app1/modules/routes.js) to follow an example of error handling)_
+_(Please see the 'test-error' route in [test/sample-app1/modules/routes.js](../master/test/sample-app1/modules/routes.js) to follow an example of error handling)_
 
 Velkro offers two specialized Errors to assist with error handling:
 
@@ -216,7 +216,7 @@ If an InternalError makes its way all the way back up (for example, if `throw e`
 
 ## JSON Web Tokens
 
-If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set the "jwt" value of the AJAX object. The frontend needs to then store the token (for example in a cookie) and pass it along with each request by setting the 'Authorization' header (please see the test in [test/tests/application.js](..test/tests/application.js) for an example). `ctx.state.user` is then set to the token data, which for example can be used for determining if a user is logged in or not (see [test/sample-app1/middleware/security/login-required.js](..test/sample-app1/middleware/security/login-required.js)).
+If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set the "jwt" value of the AJAX object. The frontend needs to then store the token (for example in a cookie) and pass it along with each request by setting the 'Authorization' header (please see the test in [test/tests/application.js](../master/test/tests/application.js) for an example). `ctx.state.user` is then set to the token data, which for example can be used for determining if a user is logged in or not (see [test/sample-app1/middleware/security/login-required.js](../master/test/sample-app1/middleware/security/login-required.js)).
 
 _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is used for downstream token signing)_
 
