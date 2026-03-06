@@ -52,15 +52,15 @@ new Velkro({
 * modules/
   * module1/
     * controller.js
-    * module.js
+    * model.js
     * routes.js
   * module2/
     * module2a/  (nested module)
       * controller.js
-      * module.js
+      * model.js
       * routes.js
     * controller.js
-    * module.js
+    * model.js
     * routes.js
 * server.js
     
