@@ -1,29 +1,27 @@
-'use strict';
+import controller from './controller.js';
 
-const controller = require('./controller');
-
-async function xyzMiddleware(ctx, next){
+async function xyzMiddleware(ctx, next) {
 	await new Promise(resolve => setTimeout(resolve, 500));
 	ctx.ajax.setKey('xyz', 'XYZ');
 	return next();
 }
 
-module.exports = [
+export default [
 	{
 		routes: {
 			get: {
-				''(ctx){
+				''(_ctx) {
 					return 'Application API';
 				},
-				'xyz': {
+				xyz: {
 					middlewares: [xyzMiddleware],
-					async handler(ctx){
+					async handler(_ctx) {
 						await new Promise(resolve => setTimeout(resolve, 500));
 						return 'xyz';
-					}
+					},
 				},
-				'test-error': controller.testError
-			}
-		}
-	}
+				'test-error': controller.testError,
+			},
+		},
+	},
 ];

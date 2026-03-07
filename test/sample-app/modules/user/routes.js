@@ -1,22 +1,20 @@
-'use strict';
+import controller from './controller.js';
+import loginRequired from '../../middleware/security/login-required.js';
 
-const controller = require('./controller');
-
-const loginRequired = require('../../middleware/security/login-required');
-
-module.exports = [
+export default [
 	{
 		routes: {
 			post: {
-				'login': controller.login,
-			}
-		}
-	}, {
+				login: controller.login,
+			},
+		},
+	},
+	{
 		middlewares: [loginRequired],
 		routes: {
 			get: {
-				'me': controller.getMe,
+				me: controller.getMe,
 			},
-		}
-	}
+		},
+	},
 ];

@@ -1,21 +1,18 @@
-'use strict';
+import { ExternalError } from '../../../lib/errors.js';
+import model from './model.js';
 
-const {ExternalError} = require('../../../lib/errors');
-
-const model = require('./model');
-
-module.exports = {
-	async testError(ctx){
-		try{
+export default {
+	async testError(_ctx) {
+		try {
 			await model.testError();
-		}catch(e){
-			if(e.handle === 'internal-error'){
-				throw ExternalError('external-error', 'An ExternalError has occurred');
-			}else{
+		} catch (e) {
+			if (e.message === 'internal-error') {
+				throw new ExternalError('external-error', 'An ExternalError has occurred');
+			} else {
 				throw e;
 			}
 		}
-		
+
 		return 'no error';
-	}
+	},
 };

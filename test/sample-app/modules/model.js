@@ -1,9 +1,5 @@
-'use strict';
-
-const {InternalError} = require('../../../lib/errors');
-
-module.exports = {
-	async testError(){
-		throw InternalError('internal-error');
-	}
+export default {
+	async testError() {
+		throw new Error('internal-error');
+	},
 };

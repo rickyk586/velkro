@@ -1,11 +1,11 @@
 # Velkro
-Async/Await Module-based Node.js API Framework built on [Koa] (the successor to Express)
+Module-based Node.js API Framework built on [Koa] (the successor to Express)
 
-The purpose of Velkro is to give you a structure for your API code. It allows you to chunk your code into modules, with each module having a routes definition, and optionally a controller and model. Routes are automatically pulled from modules and added to the http server. Velkro also allows you to easily add middleware across the entire API, per group of routes, or per individual routes. It is mostly unopinionated, leaving the data layer up to you. It does however handle JSON body (using [koa-bodyparser]), [JSON Web Tokens](#json-web-tokens), CORS (using [@koa/cors]), [AJAX respond object structure](#ajax-response-object), and [internal/external error handling](#error-handling). 
+The purpose of Velkro is to give you a structure for your API code. It allows you to chunk your code into modules, with each module having a routes definition, and optionally a controller and model. Routes are automatically pulled from modules and added to the http server. Velkro also allows you to easily add middleware across the entire API, per group of routes, or per individual routes. It is mostly unopinionated, leaving the data layer up to you. It does however handle JSON body (using [@koa/bodyparser]), [JSON Web Tokens](#json-web-tokens), CORS (using [@koa/cors]), [AJAX respond object structure](#ajax-response-object), and [internal/external error handling](#error-handling). 
   
 ## Installation
 
-Velkro requires __node v7.6.0__ or higher for ES2015 and async function support. (required by [Koa])
+Velkro requires __node v20.0.0__ or higher for ESM
 
 ```
 $ npm install velkro --save
@@ -14,10 +14,11 @@ $ npm install velkro --save
 ## Hello Velkro
 
 ```js
-const Velkro = require('velkro');
+import Velkro from 'velkro';
 
 const app = new Velkro().on('error', e => console.error(e));
-app.ready.then(() => console.log('API Ready!'));
+await app.ready;
+console.log('API Ready!');
 ```
 
 ## Sample App
@@ -42,6 +43,13 @@ new Velkro({
     },
     jwt: {
         secret: null
+    },
+    errors: {
+        unknownError: {
+            handle: 'unknown-error',
+            message: 'An internal error occurred',
+            data: null
+        }
     }
 });
 ```
@@ -69,12 +77,12 @@ new Velkro({
 Sample routes.js:
 
 ```js
-const controller = require('./controller');
+import controller from './controller.js';
 
-const loginRequired = require('../../middleware/security/login-required');
-const canViewSecret = require('../../middleware/security/can-view-secret');
+import loginRequired from '../../middleware/security/login-required.js';
+import canViewSecret from '../../middleware/security/can-view-secret.js';
 
-module.exports = [
+export default [
     {
         routes: {
             post: {
@@ -115,16 +123,15 @@ As you can see, middleware can be added for a group of routes, or for one indivi
     
 ## Controller
 
-Each route in routes.js is linked to a method in the controller. The data returned by the method is the data that's sent back to the user (see [AJAX response object below](#ajax-response-object)). Each method can optionally be async. It's good practice to put validation and filtering in controller methods. Each method is passed the ctx object from [Koa].
+Each route in routes.js is linked to a method in the controller. The data returned by the method is the data that's sent back to the user (see [AJAX response object below](#ajax-response-object)). Each method can optionally be async. It's good practice to put validation and filtering in controller methods. Each method is passed the ctx object from [Koa]. Errors can be thrown and they will be caught and handled by the framework (see [Error Handling below](#error-handling)).
 
 Sample controller.js:
 
 ```js
-const {ExternalError} = require('velkro/lib/errors');
+import { ExternalError } from 'velkro/lib/errors.js';
+import model from './model.js';
 
-const model = require('./model');
-
-module.exports = {
+export default {
     async login(ctx){
         const data = ctx.request.body;
         
@@ -135,9 +142,9 @@ module.exports = {
         }catch(e){
             if(e.handle === 'incorrect-password'){
                 throw ExternalError('incorrect-password', 'The password you provided is incorrect');
-            }else{
-                throw e;
             }
+
+            throw e;
         }
         
         ctx.state.user = {
@@ -160,13 +167,11 @@ module.exports = {
 
 ## Model (optional)
 
-You can optionally have a model for each module. It's good practice to put external data-fetching here (like from a DB). It's also good practice to only allow models to call other models (instead of controllers).
+You can optionally have a model for each module. It's good practice to put external data-fetching here. It's also good practice to only allow models to call other models (instead of controllers).
 
 Sample model.js:
 
 ```js
-const {InternalError} = require('velkro/lib/errors');
-
 const mockDB = {
     '123': {
         email: 'foo@foo.com',
@@ -174,7 +179,7 @@ const mockDB = {
     }
 };
 
-module.exports = {
+export default {
     async find(userId){
         await new Promise(resolve => setTimeout(resolve, 50));    //simulate asynchronous call
         return mockDB[userId];
@@ -185,7 +190,9 @@ module.exports = {
         if(email === mockDB[123].email && password === 'bar'){
             return 123;
         }else{
-            throw InternalError('incorrect-password');
+            const error = new Error('incorrect-password');
+            error.handle = 'incorrect-password';
+            throw error;
         }
     }
 };
@@ -203,7 +210,6 @@ The data returned by each route is in a standardized object format:
         "handle": ""    
     }],
     "notices": [],
-    "jwt": "",
     "data": {}
 }
 ```
@@ -216,30 +222,22 @@ Using Async/Await (promises in general) everywhere allows us to take advantage o
 
 _(Please see the 'test-error' route in [test/sample-app/modules/routes.js](../master/test/sample-app/modules/routes.js) to follow an example of error handling)_
 
-Velkro offers two specialized Errors to assist with error handling:
-
-### InternalError
-
-`const {InternalError} = require('velkro/lib/errors');`
-
-This is to be used when an error occurs in a model. For example, if the password is found to be incorrect in modules/user/model.js:login(), then you can `throw InternalError('incorrect-password')`. It can also be used for errors that a user should never see.
-
----
+Velkro offers a specialized Error to assist with error handling:
 
 ### ExternalError
 
-`const {ExternalError} = require('velkro/lib/errors');`
+`import { ExternalError } from 'velkro/lib/errors.js';`
 
-This is to be used when an error is meant to be displayed to the user. To continue the example above, the InternalError can be caught and converted to an ExternalError like so:
+This is to be used when an error is meant to be displayed to the user. To continue the example above, the Error can be caught and converted to an ExternalError like so:
 
 ```js
-module.exports = {
+export default {
     async testError(ctx){
         try{
             await model.testError();
         }catch(e){
             if(e.handle === 'incorrect-password'){
-                throw ExternalError('incorrect-password', 'The password you provided is incorrect');
+                throw new ExternalError('incorrect-password', 'The password you provided is incorrect');
             }else{
                 throw e;
             }
@@ -252,11 +250,11 @@ module.exports = {
 
 ---
 
-If an InternalError makes its way all the way back up (for example, if `throw e` above ran because e.handle did not match), then it is added to the AJAX object errors array with the handle 'internal-error' and the message "Internal Error". ExternalErrors are added to the AJAX object errors array with the same handle and message that they were constructed with, so that they can be handled by the frontend accordingly.
+If an error makes its way all the way back up (for example, if `throw e` above ran because e.handle did not match), then it is added to the AJAX object errors array with the handle 'unknown-error' and the message "An internal error occurred" (these can be configured in the constructor). ExternalErrors are added to the AJAX object errors array with the same handle and message that they were constructed with, so that they can be handled by the frontend accordingly.
 
 ## JSON Web Tokens
 
-If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set the "jwt" value of the AJAX object. The frontend needs to then store the token (for example in a cookie) and pass it along with each request by setting the 'Authorization' header (please see the 'login-required endpoint - logged in' test in [test/tests/application.js](../master/test/tests/application.js) for an example). `ctx.state.user` is then set to the token data, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](../master/test/sample-app/middleware/security/login-required.js)).
+If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set a `session` cookie with the JWT. The cookie is set with `HttpOnly`, `SameSite: 'strict'`, and `Secure: ctx.secure` attributes. The JWT is then automatically extracted from this cookie on subsequent requests and placed into `ctx.state.user`, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](../master/test/sample-app/middleware/security/login-required.js)).
 
 _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is used for downstream token signing)_
 
@@ -267,8 +265,7 @@ The app instance returned from `new Velkro()` is an event emitter that emits the
 * 'routes-loaded'            //called when all routes have been loaded 
 * 'http-server-started'        //called when the server has started
 * 'external-error'            //called on each external error (see Error Handling)
-* 'internal-error'            //called on each internal error (see Error Handling)
-* 'unknown-error'            //called on each unknown error (not internal or external)
+* 'unknown-error'             //called on any other error (not an ExternalError)
 * 'err'                        //called on any error (any of above)
 
 The event is emitted with the [Koa] app as the first parameter. The 'routes-loaded' event is emitted with a second parameter of an object showing all of the routes like so:
@@ -289,7 +286,8 @@ The event is emitted with the [Koa] app as the first parameter. The 'routes-load
 `app.ready` is a promise that resolves with the [Koa] app when the Velkro app is completely loaded.
 
 [Koa]: http://koajs.com/
-[koa-bodyparser]: https://github.com/koajs/bodyparser
+[@koa/bodyparser]: https://github.com/koajs/bodyparser
 [@koa/cors]: https://github.com/koajs/cors
+[@koa/router]: https://github.com/koajs/router
 [koa-jwt]: https://github.com/koajs/jwt
 [jsonwebtoken]: https://github.com/auth0/node-jsonwebtoken
