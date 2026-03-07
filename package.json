@@ -11,7 +11,16 @@
 		"lint:fix": "eslint . --fix",
 		"format": "prettier --write ."
 	},
-	"repository": "rickyk586/velkro",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rickyk586/velkro.git"
+	},
+	"author": "rickyk586",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/rickyk586/velkro/issues"
+	},
+	"homepage": "https://github.com/rickyk586/velkro#readme",
 	"keywords": [
 		"web",
 		"app",

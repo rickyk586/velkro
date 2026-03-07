@@ -23,7 +23,7 @@ console.log('API Ready!');
 
 ## Sample App
 
-Check out [test/sample-app](../master/test/sample-app) for an example app.
+Check out [test/sample-app](test/sample-app) for an example app.
 
 ## Constructor defaults
 
@@ -128,7 +128,7 @@ Each route in routes.js is linked to a method in the controller. The data return
 Sample controller.js:
 
 ```js
-import { ExternalError } from 'velkro/lib/errors.js';
+import { ExternalError } from 'velkro';
 import model from './model.js';
 
 export default {
@@ -220,13 +220,13 @@ Data returned by each controller method is put into "data". Errors are added to 
 
 Using Async/Await (promises in general) everywhere allows us to take advantage of having one exception channel. That is, if an error occurs, an exception is thrown and it flows back up through the call stack where it can be caught anywhere along the way using try/catch.
 
-_(Please see the 'test-error' route in [test/sample-app/modules/routes.js](../master/test/sample-app/modules/routes.js) to follow an example of error handling)_
+_(Please see the 'test-error' route in [test/sample-app/modules/routes.js](test/sample-app/modules/routes.js) to follow an example of error handling)_
 
 Velkro offers a specialized Error to assist with error handling:
 
 ### ExternalError
 
-`import { ExternalError } from 'velkro/lib/errors.js';`
+`import { ExternalError } from 'velkro';`
 
 This is to be used when an error is meant to be displayed to the user. To continue the example above, the Error can be caught and converted to an ExternalError like so:
 
@@ -254,7 +254,7 @@ If an error makes its way all the way back up (for example, if `throw e` above r
 
 ## JSON Web Tokens
 
-If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set a `session` cookie with the JWT. The cookie is set with `HttpOnly`, `SameSite: 'strict'`, and `Secure: ctx.secure` attributes. The JWT is then automatically extracted from this cookie on subsequent requests and placed into `ctx.state.user`, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](../master/test/sample-app/middleware/security/login-required.js)).
+If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set a `session` cookie with the JWT. The cookie is set with `HttpOnly`, `SameSite: 'strict'`, and `Secure: ctx.secure` attributes. The JWT is then automatically extracted from this cookie on subsequent requests and placed into `ctx.state.user`, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](test/sample-app/middleware/security/login-required.js)).
 
 _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is used for downstream token signing)_
 

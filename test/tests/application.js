@@ -8,8 +8,7 @@ describe('Application Core', () => {
 		jwt: {
 			secret: '38rjh#U&G223id9#$^&Oj889',
 		},
-	})
-		.on('unknown-error', e => console.error(e));
+	}).on('unknown-error', e => console.error(e));
 
 	test('basic call', async () => {
 		await app.ready;
