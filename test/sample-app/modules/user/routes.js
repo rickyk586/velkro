@@ -4,6 +4,11 @@ import loginRequired from '../../middleware/security/login-required.js';
 export default [
 	{
 		routes: {
+			get: {
+				''(_ctx) {
+					return 'User Module Root';
+				},
+			},
 			post: {
 				login: controller.login,
 			},

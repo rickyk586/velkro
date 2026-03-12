@@ -1,4 +1,4 @@
-import { ExternalError } from '../../../../lib/errors.js';
+import {ExternalError} from '../../../../lib/errors.js';
 import model from './model.js';
 
 export default {

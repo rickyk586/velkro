@@ -18,6 +18,14 @@ describe('Application Core', () => {
 		expect(response.body).toHaveProperty('data', 'Application API');
 	});
 
+	test('empty string route in module', async () => {
+		await app.ready;
+
+		const response = await request(app.httpServer).get('/user/');
+
+		expect(response.body).toHaveProperty('data', 'User Module Root');
+	});
+
 	afterAll(() => {
 		app?.httpServer?.close?.();
 	});

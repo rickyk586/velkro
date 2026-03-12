@@ -42,7 +42,8 @@ new Velkro({
         options: {}            //passed through to @koa/cors
     },
     jwt: {
-        secret: null
+        secret: null,
+        cookie: {}            //passed through to ctx.cookies.set
     },
     errors: {
         unknownError: {
@@ -254,7 +255,9 @@ If an error makes its way all the way back up (for example, if `throw e` above r
 
 ## JSON Web Tokens
 
-If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set a `session` cookie with the JWT. The cookie is set with `HttpOnly`, `SameSite: 'strict'`, and `Secure: ctx.secure` attributes. The JWT is then automatically extracted from this cookie on subsequent requests and placed into `ctx.state.user`, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](test/sample-app/middleware/security/login-required.js)).
+If `jwt.secret` is set in the Velkro constructor, then JWT functionality is added. All you have to do is set `ctx.state.user` to the data that you want in the token. This will set a `session` cookie with the JWT. The cookie is set with `HttpOnly`, `SameSite: 'strict'`, and `Secure: ctx.secure` attributes by default. These can be overridden or added to by setting `jwt.cookie` in the constructor. If `jwt.cookie.domain` is an array, then the cookie will be set for each domain in the array. 
+
+The JWT is then automatically extracted from this cookie on subsequent requests and placed into `ctx.state.user`, which for example can be used for determining if a user is logged in or not (see [test/sample-app/middleware/security/login-required.js](test/sample-app/middleware/security/login-required.js)).
 
 _([koa-jwt] is used for upstream token validation/parsing, and [jsonwebtoken] is used for downstream token signing)_
 
